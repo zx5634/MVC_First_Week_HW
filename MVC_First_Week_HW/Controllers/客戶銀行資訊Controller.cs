@@ -36,7 +36,8 @@ namespace MVC_First_Week_HW.Controllers
         public FileResult ExportExcel(string keyword)
         {
             List<string> show_col = new List<string> { "銀行名稱", "銀行代碼", "分行代碼", "帳戶名稱", "帳戶號碼", "客戶名稱" };
-            return Excel.export客戶銀行資訊Excel(repo.GetFilterItem(keyword), "客戶銀行資訊", show_col);
+            List<string> relationCol = new List<string> { "客戶資料.客戶名稱" };
+            return Excel.exportExcel(repo.GetFilterItem(keyword), "客戶銀行資訊", show_col, relationCol);
         }
 
         // GET: 客戶銀行資訊/Details/5

@@ -62,8 +62,9 @@ namespace MVC_First_Week_HW.Controllers
         public FileResult ExportExcel(string keyword, string 篩選職稱, string sort_col, string current_sort)
         {
             List<string> show_col = new List<string> { "職稱", "姓名", "Email", "手機", "電話", "客戶名稱", "客戶名稱" };
-            return Excel.export客戶聯絡人Excel(repo.GetFilterItem(keyword, 篩選職稱, sort_col, current_sort),
-                "客戶聯絡人", show_col);
+            List<string> relationCol = new List<string> { "客戶資料.客戶名稱" };
+            return Excel.exportExcel(repo.GetFilterItem(keyword, 篩選職稱, sort_col, current_sort),
+                "客戶聯絡人", show_col, relationCol);
         }
 
         //public ActionResult Search(string keyword)
