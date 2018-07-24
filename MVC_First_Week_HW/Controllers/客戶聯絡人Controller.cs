@@ -11,6 +11,7 @@ using X.PagedList;
 
 namespace MVC_First_Week_HW.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class 客戶聯絡人Controller : Controller
     {
         客戶聯絡人Repository repo;

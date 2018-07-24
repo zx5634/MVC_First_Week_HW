@@ -18,6 +18,9 @@
           <Property Name="Email" Type="nvarchar" MaxLength="250" />
           <Property Name="Disable" Type="bit" Nullable="false" />
           <Property Name="客戶分類" Type="nvarchar" MaxLength="200" />
+          <Property Name="帳號" Type="nvarchar" MaxLength="200" />
+          <Property Name="密碼" Type="nvarchar" MaxLength="200" />
+          <Property Name="Role" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="客戶銀行資訊">
           <Key>
@@ -114,6 +117,9 @@
           <Property Name="客戶分類" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="客戶銀行資訊" Relationship="客戶資料Model.FK_客戶銀行資訊_客戶資料" FromRole="客戶資料" ToRole="客戶銀行資訊" />
           <NavigationProperty Name="客戶聯絡人" Relationship="客戶資料Model.FK_客戶聯絡人_客戶資料" FromRole="客戶資料" ToRole="客戶聯絡人" />
+          <Property Name="帳號" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="密碼" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="客戶銀行資訊">
           <Key>
@@ -176,6 +182,9 @@
           <EntitySetMapping Name="客戶資料">
             <EntityTypeMapping TypeName="客戶資料Model.客戶資料">
               <MappingFragment StoreEntitySet="客戶資料">
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="密碼" ColumnName="密碼" />
+                <ScalarProperty Name="帳號" ColumnName="帳號" />
                 <ScalarProperty Name="客戶分類" ColumnName="客戶分類" />
                 <ScalarProperty Name="Disable" ColumnName="Disable" />
                 <ScalarProperty Name="Email" ColumnName="Email" />

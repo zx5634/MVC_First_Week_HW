@@ -1,0 +1,34 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { style = "margin-left:20px;" }))
+    {
+        <h2>Login</h2>
+        <div style="margin-bottom:10px;">
+            @Html.Label("帳號: ")
+            @Html.TextBox("Account", null, new { placeholder = "請輸入帳號", @class = "form-control" })
+        </div>
+        <div style="margin-bottom:10px;">
+            @Html.Label("密碼: ")
+            @Html.Password("PD", null, new { placeholder = "請輸入密碼", @class = "form-control" })
+        </div>
+        <div style="margin-bottom:10px;">
+            @Html.CheckBox("remember", false)
+            @Html.Label("remember", "是否記憶密碼(維持7天)")
+        </div>
+        <button type="submit" class="btn btn-primary">登入</button>
+    }
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

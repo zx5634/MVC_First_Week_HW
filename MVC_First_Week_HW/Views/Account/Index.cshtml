@@ -1,0 +1,110 @@
+﻿@model MVC_First_Week_HW.Models.客戶資料
+@section breadCrumb{
+    @Html.ActionLink("Account", "Index", "Account")
+}
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("normalUserEdit", "Account", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>客戶資料</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶名稱, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(@Model.客戶名稱 ?? "", new { @class = "control-label" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.統一編號, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(@Model.統一編號 ?? "", new { @class = "control-label" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.電話, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.電話, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.電話, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.傳真, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.傳真, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.傳真, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.地址, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.地址, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.地址, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶分類, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(@Model.客戶分類 ?? "", new { @class = "control-label" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.帳號, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(@Model.帳號 ?? "", new { @class = "control-label" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.密碼, "新密碼", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("密碼", "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.密碼, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.Role == null)
+                {
+                    @Html.Label("Normal", new { @class = "control-label" })
+                }
+                else
+                {
+                    @Html.Label(@Model.Role ?? "", new { @class = "control-label" })
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}

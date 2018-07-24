@@ -6,11 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using MVC_First_Week_HW.Models;
 using X.PagedList;
 
 namespace MVC_First_Week_HW.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class 客戶資料Controller : Controller
     {
         客戶資料Repository repo;
@@ -138,10 +140,11 @@ namespace MVC_First_Week_HW.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類")] 客戶資料 客戶資料)
+        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類,帳號,密碼,Role")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
+                客戶資料.密碼 = LoginViewModel.Encrypt(客戶資料.密碼);
                 repo.Add(客戶資料);
                 repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
@@ -170,13 +173,28 @@ namespace MVC_First_Week_HW.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類,帳號,密碼,Role")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
-                var db = repo.UnitOfWork.Context;
-                db.Entry(客戶資料).State = EntityState.Modified;
-                db.SaveChanges();
+                //var db = repo.UnitOfWork.Context;
+                //db.Entry(客戶資料).State = EntityState.Modified;
+                //db.SaveChanges();
+
+                客戶資料 client = repo.Find(客戶資料.Id);
+                client.客戶名稱 = 客戶資料.客戶名稱;
+                client.統一編號 = 客戶資料.統一編號;
+                client.電話 = 客戶資料.電話;
+                client.傳真 = 客戶資料.傳真;
+                client.地址 = 客戶資料.地址;
+                client.Email = 客戶資料.Email;
+                client.客戶分類 = 客戶資料.客戶分類;
+                client.帳號 = 客戶資料.帳號;
+                client.密碼 = string.IsNullOrEmpty(客戶資料.密碼) ? client.密碼 : LoginViewModel.Encrypt(客戶資料.密碼);
+                client.Role = 客戶資料.Role;
+                repo.UnitOfWork.Commit();
+
+
                 return RedirectToAction("Index");
             }
             return View(客戶資料);

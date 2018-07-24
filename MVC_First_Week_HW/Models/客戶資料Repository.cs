@@ -91,6 +91,17 @@ namespace MVC_First_Week_HW.Models
             }
             return client;
         }
+
+        public 客戶資料 FindAccount(string account, string pd)
+        {
+            string rpd = LoginViewModel.Encrypt(pd);
+            return this.All().FirstOrDefault(x => x.帳號 == account && x.密碼 == rpd);
+        }
+
+        public 客戶資料 FindAccount(string account)
+        {
+            return this.All().FirstOrDefault(x => x.帳號 == account);
+        }
     }
 
 	public  interface I客戶資料Repository : IRepository<客戶資料>

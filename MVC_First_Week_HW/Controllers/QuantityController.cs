@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace MVC_First_Week_HW.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class QuantityController : Controller
     {
         客戶資料Entities db = new 客戶資料Entities();

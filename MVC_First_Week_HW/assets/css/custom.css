@@ -12,6 +12,13 @@
 /*==============================================
     GENERAL  STYLES    
     =============================================*/
+
+.dl-horizontal > dd:after {
+    display: table;
+    content: "";
+    clear: both;
+}
+
 body {
     font-family: 'Open Sans', sans-serif;
 }

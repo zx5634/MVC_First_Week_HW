@@ -9,7 +9,7 @@
     <!-- FONTAWESOME STYLES-->
     <link href="~/assets/css/font-awesome.css" rel="stylesheet" />
     <!-- MORRIS CHART STYLES-->
-    <link href="~/assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    @*<link href="~/assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" />*@
     <!-- CUSTOM STYLES-->
     <link href="~/assets/css/custom.css" rel="stylesheet" />
     <!-- GOOGLE FONTS-->
@@ -31,9 +31,18 @@
                 padding: 15px 50px 5px 50px;
                 float: right;
                 font-size: 16px;">
+                <span style="margin-right:10px;">@HttpContext.Current.User.Identity.Name</span>
                 @*Last access : 30 May 2014 &nbsp;*@
-                <a href="~/#" class="btn btn-primary" style="margin-rigth:10px;">Login</a>
-                <a href="~/#" class="btn btn-danger">Logout</a>
+                @*<a href="~/Login" class="btn btn-primary" style="margin-right:10px;">Login</a>
+        <a href="~/Login/Logout" class="btn btn-danger">Logout</a>*@
+                @if (HttpContext.Current.Request.IsAuthenticated)
+                {
+                    @Html.ActionLink("Logout", "Logout", "Login", null, new { @class = "btn btn-danger" })
+                }
+                else
+                {
+                    @Html.ActionLink("Login", "Index", "Login", null, new { @class = "btn btn-primary", style = "margin-right:10px;" })
+                }
             </div>
         </nav>
         <!-- /. NAV TOP  -->
@@ -43,60 +52,44 @@
                     <li class="text-center">
                         <img src="~/assets/img/find_user.png" class="user-image img-responsive" />
                     </li>
+                    @if (HttpContext.Current.User.IsInRole("admin"))
+                    {
+                        @Html.Partial("~/Views/AdminMenuView.cshtml");
+                    }
+                    else
+                    {
+                        @Html.Partial("~/Views/NormalMenuView.cshtml");
+                    }
+                    @*<li>
+            <a href="~/#"><i class="fa fa-sitemap fa-3x"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="~/#">Second Level Link</a>
+                </li>
+                <li>
+                    <a href="~/#">Second Level Link</a>
+                </li>
+                <li>
+                    <a href="~/#">Second Level Link<span class="fa arrow"></span></a>
+                    <ul class="nav nav-third-level">
+                        <li>
+                            <a href="~/#">Third Level Link</a>
+                        </li>
+                        <li>
+                            <a href="~/#">Third Level Link</a>
+                        </li>
+                        <li>
+                            <a href="~/#">Third Level Link</a>
+                        </li>
 
+                    </ul>
 
-                    <li>
-                        <a class="active-menu" href="~/"><i class="fa fa-dashboard fa-3x"></i> Home</a>
-                    </li>
-                    <li>
-                        <a href="~/客戶資料"><i class="fa fa-desktop fa-3x"></i> 客戶資料</a>
-                    </li>
-                    <li>
-                        <a href="~/客戶聯絡人"><i class="fa fa-qrcode fa-3x"></i> 客戶聯絡人</a>
-                    </li>
-                    <li>
-                        <a href="~/客戶銀行資訊"><i class="fa fa-bar-chart-o fa-3x"></i> 客戶銀行資訊</a>
-                    </li>
-                    <li>
-                        <a href="~/Quantity"><i class="fa fa-table fa-3x"></i> 數量</a>
-                    </li>
-                    <li>
-                        <a href="~/Home/About"><i class="fa fa-edit fa-3x"></i> 關於</a>
-                    </li>
-                    <li>
-                        <a href="~/Home/Contact"><i class="fa fa-square-o fa-3x"></i> 連絡人</a>
-                    </li>
-
-                    <li>
-                        <a href="~/#"><i class="fa fa-sitemap fa-3x"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="~/#">Second Level Link</a>
-                            </li>
-                            <li>
-                                <a href="~/#">Second Level Link</a>
-                            </li>
-                            <li>
-                                <a href="~/#">Second Level Link<span class="fa arrow"></span></a>
-                                <ul class="nav nav-third-level">
-                                    <li>
-                                        <a href="~/#">Third Level Link</a>
-                                    </li>
-                                    <li>
-                                        <a href="~/#">Third Level Link</a>
-                                    </li>
-                                    <li>
-                                        <a href="~/#">Third Level Link</a>
-                                    </li>
-
-                                </ul>
-
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="~/#"><i class="fa fa-square-o fa-3x"></i> Blank Page</a>
-                    </li>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="~/#"><i class="fa fa-square-o fa-3x"></i> Blank Page</a>
+        </li>*@
                 </ul>
 
             </div>
@@ -110,7 +103,7 @@
                     <a href="@Url.Action("Index","Home")">Home</a>
                     <i class="icon-angle-right"></i>
                 </li>
-                <li>@RenderSection("breadCrumb", true)</li>
+                <li>@RenderSection("breadCrumb", false)</li>
             </ul>
             @RenderBody()
             <!-- /. PAGE WRAPPER  -->
@@ -124,10 +117,10 @@
         <!-- METISMENU SCRIPTS -->
         <script src="~/assets/js/jquery.metisMenu.js"></script>
         <!-- MORRIS CHART SCRIPTS -->
-        <script src="~/assets/js/morris/raphael-2.1.0.min.js"></script>
-        <script src="~/assets/js/morris/morris.js"></script>
+        @*<script src="~/assets/js/morris/raphael-2.1.0.min.js"></script>
+        <script src="~/assets/js/morris/morris.js"></script>*@
         <!-- CUSTOM SCRIPTS -->
-        <script src="~/assets/js/custom.js"></script>
+        @*<script src="~/assets/js/custom.js"></script>*@
 
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/bootstrap")
