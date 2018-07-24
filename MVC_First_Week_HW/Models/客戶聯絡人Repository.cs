@@ -80,7 +80,7 @@ namespace MVC_First_Week_HW.Models
             return client;
         }
 
-        public IQueryable<客戶聯絡人> GetFilterItem(string keyword, string position, string sort_col, string current_sort)
+        public IQueryable<客戶聯絡人> GetFilterItem(string keyword, string position, string sort_col, bool isSort)
         {
             var client = this.All().Include(x => x.客戶資料);
 
@@ -94,20 +94,32 @@ namespace MVC_First_Week_HW.Models
             }
             if (!string.IsNullOrEmpty(sort_col))
             {
-                if (sort_col != current_sort)
+                if (isSort == false)
                 {
                     if (sort_col == "客戶名稱")
-                        client.OrderBy(x => x.客戶資料.客戶名稱);
+                    {
+                        client = (from o in client
+                                 orderby o.客戶資料.客戶名稱
+                                 select o);
+                    }
                     else
                         client = client.OrderByField(sort_col, true);
                 }
                 else
                 {
                     if (sort_col == "客戶名稱")
-                        client.OrderByDescending(x => x.客戶資料.客戶名稱);
+                    {
+                        client = (from o in client
+                                 orderby o.客戶資料.客戶名稱 descending
+                                 select o);
+                    }
                     else
                         client = client.OrderByField(sort_col, false);
                 }
+            }
+            else
+            {
+                client = client.OrderBy(c => c.Id);
             }
             return client;
         }

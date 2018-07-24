@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<MVC_First_Week_HW.Models.客戶銀行資訊>
+@using X.PagedList;
+@using X.PagedList.Mvc;
 
 @{
     ViewBag.Title = "客戶銀行資訊";
@@ -9,35 +11,37 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@using (Html.BeginForm("Search", "客戶銀行資訊", FormMethod.Post, null))
+@using (Html.BeginForm("Index", "客戶銀行資訊", FormMethod.Post, new { style = "float:left;" }))
 {
-    @Html.TextBox("keyword", (string)ViewBag.keyword, new { placeholder = "請輸入銀行名稱" });
-    <input type="submit" value="搜尋" />
+    @Html.TextBox("搜尋銀行名稱", null, new { placeholder = "請輸入銀行名稱", @class = "form-control" })
+    <input type="submit" value="搜尋" class="btn btn-default" />
 }
-@using (Html.BeginForm("ExportExcel", "客戶銀行資訊", FormMethod.Post, null))
+@using (Html.BeginForm("ExportExcel", "客戶銀行資訊", FormMethod.Post, new { style = "float:right;" }))
 {
-    @Html.Hidden("keyword", (string)ViewBag.keyword)
-    <input type="submit" value="Export" />
+    @Html.Hidden("搜尋銀行名稱", (string)ViewBag.搜尋銀行名稱)
+    @Html.Hidden("sort_col", (string)ViewBag.sort_col)
+    @Html.Hidden("isSort", ViewBag.isSort == true ? "true" : "false")
+    <input type="submit" value="Export" class="btn btn-primary" />
 }
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.銀行名稱)
+            @Html.ActionLink("銀行名稱", "Index", new { sort_col = "銀行名稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.銀行代碼)
+            @Html.ActionLink("銀行代碼", "Index", new { sort_col = "銀行代碼", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.分行代碼)
+            @Html.ActionLink("分行代碼", "Index", new { sort_col = "分行代碼", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.帳戶名稱)
+            @Html.ActionLink("帳戶名稱", "Index", new { sort_col = "帳戶名稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.帳戶號碼)
+            @Html.ActionLink("帳戶號碼", "Index", new { sort_col = "帳戶號碼", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+            @Html.ActionLink("客戶名稱", "Index", new { sort_col = "客戶名稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋銀行名稱 = (string)ViewBag.搜尋銀行名稱 })
         </th>
         <th></th>
     </tr>
@@ -72,3 +76,5 @@
     }
 
 </table>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page, sort_col = ViewBag.sort_col, isSort = ViewBag.isSort, 搜尋銀行名稱 = ViewBag.搜尋銀行名稱 }))

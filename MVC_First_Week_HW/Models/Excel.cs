@@ -30,21 +30,23 @@ namespace MVC_First_Week_HW.Models
                     index++;
                 }
             }
-            if(relationCol.Count > 0)
+            if (relationCol.Count > 0)
             {
-                foreach(string str in relationCol)
+                foreach (string str in relationCol)
                 {
                     string[] param = str.Split('.');
-                    if(param.Length == 2)
+                    if (param.Length == 2)
                     {
                         sheet.Cell(1, index).Value = param[1];
                         col_Name.Add(param[1]);
                         if (index1 == 0)
-                            index1 = index -1;
+                            index1 = index - 1;
                         index++;
                     }
                 }
             }
+            else
+                index1 = index;
             int index2 = 2;
             foreach (var item in items)
             {

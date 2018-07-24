@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<MVC_First_Week_HW.Models.客戶聯絡人>
+@using X.PagedList;
+@using X.PagedList.Mvc;
 
 @{
     ViewBag.Title = "客戶聯絡人";
@@ -9,73 +11,93 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Post, null))
+@using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Post, new { style = "float:left;" }))
 {
-    @Html.TextBox("keyword", (string)ViewBag.keyword, new { placeholder = "請輸入姓名" });
-    <input type="submit" value="搜尋" />
-    <br />
-    <label>篩選-職稱：</label>
-    @Html.DropDownList("職稱", null, "請選擇", (string)ViewBag.篩選職稱)
-    <input type="submit" value="篩選" />
+    <div style="float:left">
+        <label>搜尋：</label>
+        @Html.TextBox("搜尋姓名", null, new { placeholder = "請輸入姓名", @class = "form-control" })
+        <input type="submit" value="搜尋" class="btn btn-default" />
+    </div>
+    <div style="float:left;margin-left:10px;">
+        <label>職稱：</label>
+        @Html.DropDownList("篩選職稱", (IEnumerable<SelectListItem>)ViewBag.職稱, "請選擇", new { @class = "form-control" })
+        <input type="submit" value="篩選" class="btn btn-default" />
+    </div>
 }
-@using (Html.BeginForm("ExportExcel", "客戶聯絡人", FormMethod.Post, null))
+@using (Html.BeginForm("ExportExcel", "客戶聯絡人", FormMethod.Post, new { style = "float:right;" }))
 {
-    @Html.Hidden("keyword", (string)ViewBag.keyword)
+    @Html.Hidden("搜尋姓名", (string)ViewBag.搜尋姓名)
     @Html.Hidden("篩選職稱", (string)ViewBag.篩選職稱)
     @Html.Hidden("sort_col", (string)ViewBag.sort_col)
-    @Html.Hidden("current_sort", (string)ViewBag.current_sort)
-    <input type="submit" value="Export" />
+    @Html.Hidden("isSort", ViewBag.isSort == true ? "true" : "false")
+    <input type="submit" value="Export" class="btn btn-primary" />
 }
-<table class="table">
-    <tr>
-        <th>
-            @Html.ActionLink("職稱", "Index", new { sort_col = "職稱", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th>
-            @Html.ActionLink("姓名", "Index", new { sort_col = "姓名", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th>
-            @Html.ActionLink("Email", "Index", new { sort_col = "Email", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th>
-            @Html.ActionLink("手機", "Index", new { sort_col = "手機", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th>
-            @Html.ActionLink("電話", "Index", new { sort_col = "電話", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th>
-            @Html.ActionLink("客戶名稱", "Index", new { sort_col = "客戶名稱", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 職稱 = (string)ViewBag.篩選職稱 })
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+@using (Html.BeginForm("BatchUpdate", "客戶聯絡人"))
+{
+    @Html.Hidden("搜尋姓名", (string)ViewBag.搜尋姓名)
+    @Html.Hidden("篩選職稱", (string)ViewBag.篩選職稱)
+    @Html.Hidden("sort_col", (string)ViewBag.sort_col)
+    @Html.Hidden("isSort", ViewBag.isSort == true ? "true" : "false")
+    @Html.Hidden("page", (string)ViewBag.currentPage)
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.職稱)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.姓名)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.手機)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.電話)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
+            <th>
+                @Html.ActionLink("職稱", "Index", new { sort_col = "職稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th>
+                @Html.ActionLink("姓名", "Index", new { sort_col = "姓名", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th>
+                @Html.ActionLink("Email", "Index", new { sort_col = "Email", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th>
+                @Html.ActionLink("手機", "Index", new { sort_col = "手機", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th>
+                @Html.ActionLink("電話", "Index", new { sort_col = "電話", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th>
+                @Html.ActionLink("客戶名稱", "Index", new { sort_col = "客戶名稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋姓名 = (string)ViewBag.搜尋姓名, 篩選職稱 = (string)ViewBag.篩選職稱 })
+            </th>
+            <th></th>
         </tr>
-    }
+        @{
+            var data = Model.ToArray();
+        }
+        @for (var i = 0; i < data.Length; i++)
+        {
+            @Html.HiddenFor(modelItem => data[i].Id)
+            <tr>
+                <td>
+                    @Html.EditorFor(modelItem => data[i].職稱)
+                    @Html.ValidationMessageFor(modelItem => data[i].職稱, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => data[i].姓名)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => data[i].Email)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => data[i].手機)
+                    @Html.ValidationMessageFor(modelItem => data[i].手機, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => data[i].電話)
+                    @Html.ValidationMessageFor(modelItem => data[i].電話, "", new { @class = "text-danger" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => data[i].客戶資料.客戶名稱)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = data[i].Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = data[i].Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = data[i].Id })
+                </td>
+            </tr>
+        }
 
-</table>
+    </table>
+    <input type="submit" class="btn btn-default" />
+}
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page, sort_col = ViewBag.sort_col, isSort = ViewBag.isSort, 搜尋姓名 = ViewBag.搜尋姓名, 篩選職稱 = ViewBag.篩選職稱 }))

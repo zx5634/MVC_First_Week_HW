@@ -11,6 +11,7 @@ namespace MVC_First_Week_HW.Controllers
     {
         客戶資料Entities db = new 客戶資料Entities();
         // GET: Quantity
+        [計算時間Attribute]
         public ActionResult Index()
         {
             var items = db.客戶資料.Select(x => new QuantityView
@@ -22,6 +23,7 @@ namespace MVC_First_Week_HW.Controllers
             return View(items);
         }
 
+        [計算時間Attribute]
         public FileResult ExportExcel()
         {
             var items = db.客戶資料.Select(x => new QuantityView

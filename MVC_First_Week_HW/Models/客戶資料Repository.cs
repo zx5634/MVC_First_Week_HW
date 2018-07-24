@@ -67,7 +67,7 @@ namespace MVC_First_Week_HW.Models
             return client;
         }
 
-        public IQueryable<客戶資料> GetFilterItem(string keyword, string category, string sort_col, string current_sort)
+        public IQueryable<客戶資料> GetFilterItem(string keyword, string category, string sort_col, bool isSort)
         {
             var client = this.All();
             if (!string.IsNullOrEmpty(keyword))
@@ -80,7 +80,7 @@ namespace MVC_First_Week_HW.Models
             }
             if (!string.IsNullOrEmpty(sort_col))
             {
-                if (sort_col != current_sort)
+                if (isSort == false)
                 {
                     client = client.OrderByField(sort_col, true);
                 }

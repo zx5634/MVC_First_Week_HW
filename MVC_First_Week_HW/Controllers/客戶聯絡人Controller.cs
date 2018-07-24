@@ -7,12 +7,14 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVC_First_Week_HW.Models;
+using X.PagedList;
 
 namespace MVC_First_Week_HW.Controllers
 {
     public class 客戶聯絡人Controller : Controller
     {
         客戶聯絡人Repository repo;
+        private int pageSize = 5;
 
         public 客戶聯絡人Controller()
         {
@@ -20,51 +22,95 @@ namespace MVC_First_Week_HW.Controllers
         }
 
         // GET: 客戶聯絡人
-        public ActionResult Index(客戶聯絡人 客戶聯絡人, string keyword, string sort_col, string current_sort)
+        [計算時間Attribute]
+        [HandleError(ExceptionType = typeof(System.Data.Entity.Validation.DbEntityValidationException), View = "Error_DbEntityValidationException")]
+        public ActionResult Index(客戶聯絡人ViewModel 客戶聯絡人)
         {
             var client = repo.All().Include(x=>x.客戶資料);
 
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrEmpty(客戶聯絡人.搜尋姓名))
             {
-                client = repo.FindName(keyword, client);
+                client = repo.FindName(客戶聯絡人.搜尋姓名, client);
             }
-            if (!string.IsNullOrEmpty(客戶聯絡人.職稱))
+            if (!string.IsNullOrEmpty(客戶聯絡人.篩選職稱))
             {
-                client = repo.GetPosition(客戶聯絡人.職稱, client);
+                client = repo.GetPosition(客戶聯絡人.篩選職稱, client);
             }
-            if (!string.IsNullOrEmpty(sort_col))
+            
+            if (!string.IsNullOrEmpty(客戶聯絡人.sort_col))
             {
-                if (sort_col != current_sort)
+                bool sort = 客戶聯絡人.isSort;
+                if (sort == false)
                 {
-                    if (sort_col == "客戶名稱")
-                        client.OrderBy(x => x.客戶資料.客戶名稱);
+                    if (客戶聯絡人.sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                 orderby o.客戶資料.客戶名稱
+                                 select o);
+                    }
                     else
-                        client = client.OrderByField(sort_col, true);
-                    ViewBag.current_sort = sort_col;
+                        client = client.OrderByField(客戶聯絡人.sort_col, true);
                 }
                 else
                 {
-                    if (sort_col == "客戶名稱")
-                        client.OrderByDescending(x => x.客戶資料.客戶名稱);
+                    if (客戶聯絡人.sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                 orderby o.客戶資料.客戶名稱 descending
+                                 select o);
+                    }
                     else
-                        client = client.OrderByField(sort_col, false);
-                    ViewBag.current_sort = "";
+                        client = client.OrderByField(客戶聯絡人.sort_col, false);
                 }
+                if (ViewBag.isSort != sort)
+                    ViewBag.isSort = sort;
             }
             else
-                ViewBag.current_sort = "";
-            ViewBag.keyword = keyword;
-            ViewBag.篩選職稱 = 客戶聯絡人.職稱;
+            {
+                client = client.OrderBy(c => c.Id);
+                ViewBag.isSort = true;
+            }
+            var orderClient = client.ToPagedList(客戶聯絡人.page == 0 ? 1 : 客戶聯絡人.page, pageSize);
+            ViewBag.currentPage = 客戶聯絡人.page == 0 ? "1" : 客戶聯絡人.page.ToString();
+            ViewBag.搜尋姓名 = 客戶聯絡人.搜尋姓名;
+            ViewBag.篩選職稱 = 客戶聯絡人.篩選職稱;
             ViewBag.職稱 = GetPositionSelect();
-            return View(client);
+            return View(orderClient);
         }
 
-        public FileResult ExportExcel(string keyword, string 篩選職稱, string sort_col, string current_sort)
+        [計算時間Attribute]
+        public FileResult ExportExcel(客戶聯絡人ViewModel 客戶聯絡人)
         {
             List<string> show_col = new List<string> { "職稱", "姓名", "Email", "手機", "電話", "客戶名稱", "客戶名稱" };
             List<string> relationCol = new List<string> { "客戶資料.客戶名稱" };
-            return Excel.exportExcel(repo.GetFilterItem(keyword, 篩選職稱, sort_col, current_sort),
+            return Excel.exportExcel(repo.GetFilterItem(客戶聯絡人.搜尋姓名, 客戶聯絡人.篩選職稱, 客戶聯絡人.sort_col, 客戶聯絡人.isSort),
                 "客戶聯絡人", show_col, relationCol);
+        }
+
+        [HttpPost]
+        [計算時間Attribute]
+        [HandleError(ExceptionType = typeof(System.Data.Entity.Validation.DbEntityValidationException), View = "Error_DbEntityValidationException")]
+        public ActionResult BatchUpdate(客戶聯絡人BatchVM[] data, 客戶聯絡人ViewModel 客戶聯絡人)
+        {
+            if (ModelState.IsValid)
+            {
+                foreach (var vm in data)
+                {
+                    var client = repo.Find(vm.Id);
+                    client.職稱 = vm.職稱;
+                    client.手機 = vm.手機;
+                    client.電話 = vm.電話;
+                }
+                repo.UnitOfWork.Commit();
+                //return RedirectToAction("Index");
+            }
+            ViewBag.isSort = 客戶聯絡人.isSort;
+            ViewBag.currentPage = 客戶聯絡人.page == 0 ? "1" : 客戶聯絡人.page.ToString();
+            ViewBag.搜尋姓名 = 客戶聯絡人.搜尋姓名;
+            ViewBag.篩選職稱 = 客戶聯絡人.篩選職稱;
+            ViewBag.職稱 = GetPositionSelect();
+            ViewData.Model = repo.GetFilterItem(客戶聯絡人.搜尋姓名, 客戶聯絡人.篩選職稱, 客戶聯絡人.sort_col, 客戶聯絡人.isSort).ToPagedList(客戶聯絡人.page == 0 ? 1 : 客戶聯絡人.page, pageSize);
+            return View("Index");
         }
 
         //public ActionResult Search(string keyword)

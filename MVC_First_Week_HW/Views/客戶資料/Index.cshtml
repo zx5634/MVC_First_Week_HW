@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<MVC_First_Week_HW.Models.客戶資料>
+@using X.PagedList;
+@using X.PagedList.Mvc;
 
 @{
     ViewBag.Title = "客戶資料";
@@ -9,46 +11,49 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@using (Html.BeginForm("Index", "客戶資料", FormMethod.Post, null))
+@using (Html.BeginForm("Index", "客戶資料", FormMethod.Post, new { style = "float:left;" }))
 {
-    <label>搜尋：</label>
-    @Html.TextBox("keyword", (string)ViewBag.keyword, new { placeholder = "請輸入客戶名稱" });
-    <input type="submit" value="搜尋" />
-    <br />
-    <label>篩選-客戶分類：</label>
-    @Html.DropDownList("客戶分類", null, "請選擇", (string)ViewBag.篩選分類)
-    <input type="submit" value="篩選" />
+    <div style="float:left">
+        <label>搜尋：</label>
+        @Html.TextBox("搜尋客戶名稱", null, new { placeholder = "請輸入客戶名稱", @class = "form-control" })
+        <input type="submit" value="搜尋" class="btn btn-default" />
+    </div>
+    <div style="float:left;margin-left:10px;">
+        <label>客戶分類：</label>
+        @Html.DropDownList("篩選分類", (IEnumerable<SelectListItem>)ViewBag.CategoryList, "請選擇", new { @class = "form-control" })
+        <input type="submit" value="篩選" class="btn btn-default" />
+    </div>
 }
-@using (Html.BeginForm("ExportExcel", "客戶資料", FormMethod.Post, null))
+@using (Html.BeginForm("ExportExcel", "客戶資料", FormMethod.Post, new { style = "float:right;" }))
 {
-    @Html.Hidden("keyword", (string)ViewBag.keyword)
+    @Html.Hidden("搜尋客戶名稱", (string)ViewBag.搜尋客戶名稱)
     @Html.Hidden("篩選分類", (string)ViewBag.篩選分類)
     @Html.Hidden("sort_col", (string)ViewBag.sort_col)
-    @Html.Hidden("current_sort", (string)ViewBag.current_sort)
-    <input type="submit" value="Export" />
+    @Html.Hidden("isSort", ViewBag.isSort == true ? "true" : "false")
+    <input type="submit" value="Export" class="btn btn-primary" />
 }
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("客戶名稱", "Index", new { sort_col = "客戶名稱", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("客戶名稱", "Index", new { sort_col = "客戶名稱", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("統一編號", "Index", new { sort_col = "統一編號", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("統一編號", "Index", new { sort_col = "統一編號", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("電話", "Index", new { sort_col = "電話", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("電話", "Index", new { sort_col = "電話", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("傳真", "Index", new { sort_col = "傳真", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("傳真", "Index", new { sort_col = "傳真", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("地址", "Index", new { sort_col = "地址", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("地址", "Index", new { sort_col = "地址", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("Email", "Index", new { sort_col = "Email", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("Email", "Index", new { sort_col = "Email", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th>
-            @Html.ActionLink("客戶分類", "Index", new { sort_col = "客戶分類", current_sort = ViewBag.current_sort, keyword = (string)ViewBag.keyword, 客戶分類 = (string)ViewBag.篩選分類 })
+            @Html.ActionLink("客戶分類", "Index", new { sort_col = "客戶分類", page = ViewBag.currentPage, isSort = !ViewBag.isSort, 搜尋客戶名稱 = (string)ViewBag.搜尋客戶名稱, 客戶分類 = (string)ViewBag.篩選分類 })
         </th>
         <th></th>
     </tr>
@@ -86,3 +91,12 @@
     }
 
 </table>
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page, sort_col = ViewBag.sort_col, isSort = ViewBag.isSort, 搜尋客戶名稱 = ViewBag.搜尋客戶名稱, 客戶分類 = ViewBag.篩選分類 }))
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(function () {
+    });
+</script>

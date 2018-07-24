@@ -48,12 +48,38 @@ namespace MVC_First_Week_HW.Models
             client.Disable = true;
         }
 
-        public IQueryable<客戶銀行資訊> GetFilterItem(string keyword)
+        public IQueryable<客戶銀行資訊> GetFilterItem(string keyword, string sort_col, bool isSort)
         {
             var client = this.All().Include(x => x.客戶資料);
             if (!string.IsNullOrEmpty(keyword))
             {
                 client = this.FindName(keyword, client);
+            }
+            if (!string.IsNullOrEmpty(sort_col))
+            {
+                bool sort = isSort;
+                if (sort == false)
+                {
+                    if (sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                  orderby o.客戶資料.客戶名稱
+                                  select o);
+                    }
+                    else
+                        client = client.OrderByField(sort_col, true);
+                }
+                else
+                {
+                    if (sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                  orderby o.客戶資料.客戶名稱 descending
+                                  select o);
+                    }
+                    else
+                        client = client.OrderByField(sort_col, false);
+                }
             }
             return client;
         }

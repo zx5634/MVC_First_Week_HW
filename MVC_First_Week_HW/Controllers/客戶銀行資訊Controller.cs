@@ -7,12 +7,14 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVC_First_Week_HW.Models;
+using X.PagedList;
 
 namespace MVC_First_Week_HW.Controllers
 {
     public class 客戶銀行資訊Controller : Controller
     {
         客戶銀行資訊Repository repo;
+        private int pageSize = 5;
 
         public 客戶銀行資訊Controller()
         {
@@ -20,10 +22,53 @@ namespace MVC_First_Week_HW.Controllers
         }
 
         // GET: 客戶銀行資訊
-        public ActionResult Index()
+        [計算時間Attribute]
+        [HandleError(ExceptionType = typeof(System.Data.Entity.Validation.DbEntityValidationException), View = "Error_DbEntityValidationException")]
+        public ActionResult Index(客戶銀行資訊ViewModel 客戶銀行資訊)
         {
             var client = repo.All().Include(x => x.客戶資料);
-            return View(client);
+            if (!string.IsNullOrEmpty(客戶銀行資訊.搜尋銀行名稱))
+            {
+                client = repo.FindName(客戶銀行資訊.搜尋銀行名稱, client);
+            }
+
+            if (!string.IsNullOrEmpty(客戶銀行資訊.sort_col))
+            {
+                bool sort = 客戶銀行資訊.isSort;
+                if (sort == false)
+                {
+                    if (客戶銀行資訊.sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                  orderby o.客戶資料.客戶名稱
+                                  select o);
+                    }
+                    else
+                        client = client.OrderByField(客戶銀行資訊.sort_col, true);
+                }
+                else
+                {
+                    if (客戶銀行資訊.sort_col == "客戶名稱")
+                    {
+                        client = (from o in client
+                                  orderby o.客戶資料.客戶名稱 descending
+                                  select o);
+                    }
+                    else
+                        client = client.OrderByField(客戶銀行資訊.sort_col, false);
+                }
+                if (ViewBag.isSort != sort)
+                    ViewBag.isSort = sort;
+            }
+            else
+            {
+                client = client.OrderBy(c => c.Id);
+                ViewBag.isSort = true;
+            }
+            var orderClient = client.ToPagedList(客戶銀行資訊.page == 0 ? 1 : 客戶銀行資訊.page, pageSize);
+            ViewBag.currentPage = 客戶銀行資訊.page == 0 ? 1 : 客戶銀行資訊.page;
+            ViewBag.搜尋銀行名稱 = 客戶銀行資訊.搜尋銀行名稱;
+            return View(orderClient);
         }
 
         public ActionResult Search(string keyword)
@@ -33,11 +78,12 @@ namespace MVC_First_Week_HW.Controllers
             return View("Index", client);
         }
 
-        public FileResult ExportExcel(string keyword)
+        [計算時間Attribute]
+        public FileResult ExportExcel(客戶銀行資訊ViewModel 客戶銀行資訊)
         {
             List<string> show_col = new List<string> { "銀行名稱", "銀行代碼", "分行代碼", "帳戶名稱", "帳戶號碼", "客戶名稱" };
             List<string> relationCol = new List<string> { "客戶資料.客戶名稱" };
-            return Excel.exportExcel(repo.GetFilterItem(keyword), "客戶銀行資訊", show_col, relationCol);
+            return Excel.exportExcel(repo.GetFilterItem(客戶銀行資訊.搜尋銀行名稱, 客戶銀行資訊.sort_col, 客戶銀行資訊.isSort), "客戶銀行資訊", show_col, relationCol);
         }
 
         // GET: 客戶銀行資訊/Details/5

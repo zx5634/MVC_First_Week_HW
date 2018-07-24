@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace MVC_First_Week_HW.Models
 {
@@ -16,6 +17,10 @@ namespace MVC_First_Week_HW.Models
         public string Email { get; set; }
         public bool Disable { get; set; }
         public string 客戶分類 { get; set; }
-        public string 客戶分類2 { get; set; }
+        public string 搜尋客戶名稱 { get; set; }
+        public string 篩選分類 { get; set; }
+        public string sort_col { get; set; }
+        public bool isSort { get; set; }
+        public int page { get; set; }
     }
 }

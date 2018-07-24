@@ -7,57 +7,69 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVC_First_Week_HW.Models;
+using X.PagedList;
 
 namespace MVC_First_Week_HW.Controllers
 {
     public class 客戶資料Controller : Controller
     {
         客戶資料Repository repo;
+        private int pageSize = 5;
+
         public 客戶資料Controller()
         {
             repo = RepositoryHelper.Get客戶資料Repository();
         }
 
         // GET: 客戶資料
-        public ActionResult Index(客戶資料 客戶資料, string keyword, string sort_col, string current_sort)
+        [計算時間Attribute]
+        [HandleError(ExceptionType = typeof(System.Data.Entity.Validation.DbEntityValidationException), View = "Error_DbEntityValidationException")]
+        public ActionResult Index(客戶資料ViewModel 客戶資料)
         {
             var client = repo.All();
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrEmpty(客戶資料.搜尋客戶名稱))
             {
-                client = repo.FindName(keyword, client);
+                client = repo.FindName(客戶資料.搜尋客戶名稱, client);
             }
-            if (!string.IsNullOrEmpty(客戶資料.客戶分類))
+            if (!string.IsNullOrEmpty(客戶資料.篩選分類))
             {
-                client = repo.GetCategory(客戶資料.客戶分類, client);
+                client = repo.GetCategory(客戶資料.篩選分類, client);
             }
-            if (!string.IsNullOrEmpty(sort_col))
+            if (!string.IsNullOrEmpty(客戶資料.sort_col))
             {
-                if(sort_col != current_sort)
+                bool sort = 客戶資料.isSort;
+                if (sort == false)
                 {
-                    client = client.OrderByField(sort_col, true);
-                    ViewBag.current_sort = sort_col;
+                    client = client.OrderByField(客戶資料.sort_col, true);
                 }
                 else
                 {
-                    client = client.OrderByField(sort_col, false);
-                    ViewBag.current_sort = "";
+                    client = client.OrderByField(客戶資料.sort_col, false);
                 }
+                if (ViewBag.isSort != sort)
+                    ViewBag.isSort = sort;
             }
             else
-                ViewBag.current_sort = "";
-            ViewBag.keyword = keyword;
-            ViewBag.篩選分類 = 客戶資料.客戶分類;
-            ViewBag.客戶分類 = GetCategorySelect();
-            ViewBag.sort_col = sort_col;
-            ViewBag.current_sort = current_sort;
-            return View(client);
+            {
+                client = client.OrderBy(c => c.Id);
+                ViewBag.isSort = true;
+            }
+            
+            var orderClient = client.ToPagedList(客戶資料.page == 0 ? 1 : 客戶資料.page, pageSize);
+            ViewBag.currentPage = 客戶資料.page == 0 ? 1 : 客戶資料.page;
+            ViewBag.搜尋客戶名稱 = 客戶資料.搜尋客戶名稱;
+            ViewBag.篩選分類 = 客戶資料.篩選分類;
+            ViewBag.CategoryList = GetCategorySelect();
+            ViewBag.sort_col = 客戶資料.sort_col;
+            return View(orderClient);
         }
 
-        public FileResult ExportExcel(string keyword, string 篩選分類, string sort_col, string current_sort)
+        [計算時間Attribute]
+        public FileResult ExportExcel(客戶資料ViewModel 客戶資料)
         {
             List<string> show_col = new List<string> { "客戶名稱", "統一編號", "電話", "傳真", "地址", "Email", "客戶分類" };
-            return Excel.exportExcel(repo.GetFilterItem(keyword, 篩選分類, sort_col, current_sort),
-                "客戶資料", show_col);
+            return Excel.exportExcel(repo.GetFilterItem(客戶資料.搜尋客戶名稱, 客戶資料.篩選分類, 客戶資料.sort_col, 客戶資料.isSort),
+                "客戶資料", show_col, new List<string>());
         }
 
         //public ActionResult Search(string keyword)
@@ -107,6 +119,12 @@ namespace MVC_First_Week_HW.Controllers
                 return HttpNotFound();
             }
             return View(客戶資料);
+        }
+
+        public ActionResult Details_客戶聯絡人清單(int id)
+        {
+            ViewData.Model = repo.Find(id).客戶聯絡人.ToList();
+            return PartialView("客戶聯絡人清單");
         }
 
         // GET: 客戶資料/Create
