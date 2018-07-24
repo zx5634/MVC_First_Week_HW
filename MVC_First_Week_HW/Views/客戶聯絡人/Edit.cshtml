@@ -3,14 +3,16 @@
 @{
     ViewBag.Title = "Edit";
 }
-
+@section breadCrumb{
+    @Html.ActionLink("客戶聯絡人", "Index", "客戶聯絡人")
+}
 <h2>Edit</h2>
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>客戶聯絡人</h4>
         <hr />

@@ -3,11 +3,13 @@
 @{
     ViewBag.Title = "數量";
 }
-
+@section breadCrumb{
+    @Html.ActionLink("數量", "Index", "Quantity")
+}
 <h2>數量</h2>
 @using (Html.BeginForm("ExportExcel", "Quantity", FormMethod.Post, null))
 {
-    <input type="submit" value="Export" class="btn btn-primary"/>
+    <input type="submit" value="Export" class="btn btn-primary" />
 }
 <table class="table">
     <tr>
